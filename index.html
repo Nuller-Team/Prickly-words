@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ちくちく言葉</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200">
+    <div class="container mx-auto py-8">
+        <div class="flex flex-col items-center justify-center bg-white rounded-lg shadow-lg p-8">
+            <div class="bg-blue-100 px-20 py-4 text-center m-3 rounded-lg">
+                <h1 class="text-2xl font-bold mb-4">みんなでなくそう!!</h1>
+                <h1 class="text-6xl font-bold mb-4">ちくちく言葉</h1>
+            </div>
+            <div class="w-full border-2 border-gray-200 rounded-lg">
+                <div class="m-4">
+                    <textarea id="user-input"
+                        class="border rounded-lg py-4 px-6 mb-4 w-full h-48 text-3xl bg-gray-300 text-gray-900"
+                        placeholder="文章を入力してください"></textarea>
+                </div>
+            </div>
+        </div>
+        <div id="detection-results" class="mt-8 bg-white p-10 rounded-lg">
+            <div id="detection-results" class="mt-4">
+                <h2 class="text-lg font-semibold mb-2">チクチク言葉:</h2>
+                <div id="detection-list" class="flex flex-col space-y-1">
+                    <p class="text-red-500 font-semibold text-4xl" id="tikutiku"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var text
+        // テキストファイルを読み込む関数
+        function readTextFile(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.overrideMimeType("text/plain");
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4 && rawFile.status == "200") {
+
+                    text = rawFile.responseText.trim().replace(/\n/g, "|"), "g";
+                    console.log(text)
+                }
+            }
+            rawFile.open("GET", file, true);
+            rawFile.send(null);
+        }
+        readTextFile("data/but_word.txt", text)
+        function detectTikutiku() {
+            // テキストエリアの入力値を取得
+            var userInput = document.getElementById("user-input").value;
+            // チクチク単語を検索する正規表現パターン
+            var tikutikuPattern = new RegExp(text.trim().replace(/[\n\r]/g, ""), "g");
+            // チクチク単語を検索して配列に保存する
+            var tikutikuList = userInput.match(tikutikuPattern) || [];
+            // チクチク単語があれば表示する
+            if (tikutikuList.length > 0) {
+                var tikutikuHTML = "";
+                for (var i = 0; i < tikutikuList.length; i++) {
+                    tikutikuHTML += "<p>" + tikutikuList[i] + "</p>";
+                }
+                document.getElementById("tikutiku").innerHTML = tikutikuHTML;
+            } else {
+                document.getElementById("tikutiku").innerHTML = "";
+            }
+        }
+        // テキストエリアの入力値が変更されたら、チクチク単語を検出する
+        document.getElementById("user-input").addEventListener("input", detectTikutiku);
+    </script>
+</body>
+
+</html>
